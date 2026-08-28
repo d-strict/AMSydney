@@ -1,0 +1,94 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="hero" aria-label={site.name}>
+  <!--
+    Background is placeholder material only (Arte Museum Busan, Musée d'Orsay
+    special exhibition). Final artwork curation is not confirmed yet — keep to
+    safe subjects (Orsay, Joseon painting) until it is.
+    If replaced with video: autoplay + muted + loop + playsinline.
+  -->
+  <div class="hero-bg" role="presentation"></div>
+  <div class="hero-scrim" role="presentation"></div>
+
+  <div class="hero-content container">
+    <p class="hero-eyebrow">{site.hero.eyebrow}</p>
+    <h1 class="hero-title">
+      {site.hero.titleLines.map((line) => <span class="hero-title-line">{line}</span>)}
+    </h1>
+    <p class="hero-sub">{site.hero.sub}</p>
+    <a class="hero-cta" href="#waitlist">{site.hero.cta}</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/media/hero-orsay.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  @media (max-width: 800px) {
+    .hero-bg {
+      background-image: url('/media/hero-orsay-800.jpg');
+    }
+  }
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.55) 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding-block: 7rem 5rem;
+  }
+  .hero-eyebrow {
+    margin: 0 0 1.4rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    color: var(--grey-100);
+  }
+  .hero-title {
+    margin: 0;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+  .hero-title-line {
+    display: block;
+  }
+  .hero-sub {
+    margin: 1.2rem 0 2.4rem;
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    color: var(--grey-300);
+  }
+  .hero-cta {
+    display: inline-block;
+    padding: 0.95rem 2.2rem;
+    background: var(--white);
+    color: var(--black);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .hero-cta:hover {
+    background: var(--grey-300);
+  }
+</style>

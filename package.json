@@ -1,0 +1,22 @@
+{
+  "name": "arte-museum-sydney",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Arte Museum Special Edition in Sydney — waitlist landing page",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.4.4",
+    "astro": "^5.14.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/node": "^26.4.0",
+    "typescript": "^5.9.2"
+  }
+}

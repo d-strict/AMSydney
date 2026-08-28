@@ -1,0 +1,146 @@
+---
+import { site } from '../data/site';
+---
+
+<!--
+  Privacy Collection Notice modal — same-page dialog, no navigation.
+  Written for Australian Spam Act 2003 + Privacy Act 1988 (APP 5, APP 8)
+  minimum disclosure. English only on the live page.
+  NOTE: the hosting/storage sentence is written platform-neutral because the
+  final hosting platform for this build is still to be confirmed — legal
+  should confirm the exact wording before launch.
+-->
+<div class="privacy-overlay" id="privacy-overlay" hidden>
+  <div
+    class="privacy-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="privacy-title"
+    tabindex="-1"
+  >
+    <button class="privacy-close" type="button" data-close-privacy aria-label="Close">
+      &#10005;
+    </button>
+
+    <h2 class="privacy-title" id="privacy-title">Privacy Collection Notice</h2>
+
+    <p>
+      Arte Museum Special Edition in Sydney is operated by
+      <strong>d&rsquo;strict Co., Ltd.</strong> (Seoul, Republic of Korea). We collect
+      your email address to send you updates about Arte Museum Special Edition in
+      Sydney, such as opening dates, tickets and early-access offers. Without it,
+      we can&rsquo;t add you to the waitlist.
+    </p>
+
+    <p>
+      Your email address is stored on our website platform and may be accessed by
+      our team in Korea and shared with our email service provider and, in hashed
+      form, with advertising platforms such as Meta. This means it is stored and
+      processed outside Australia, in the United States and Korea. We never sell
+      your personal information.
+    </p>
+
+    <p>
+      You can unsubscribe at any time using the link in any email we send. To
+      access or correct your information, or to make a privacy complaint, contact
+      us at
+      <a href={site.links.contact} target="_blank" rel="noopener noreferrer">dstrict.com/CONTACT</a>.
+      If you&rsquo;re not satisfied with our response, you can contact the Office of
+      the Australian Information Commissioner
+      (<a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer">oaic.gov.au</a>).
+    </p>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('privacy-overlay') as HTMLDivElement;
+  const dialog = overlay.querySelector('.privacy-dialog') as HTMLDivElement;
+  let lastFocused: HTMLElement | null = null;
+
+  function openModal() {
+    lastFocused = document.activeElement as HTMLElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    dialog.focus();
+  }
+
+  function closeModal() {
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    lastFocused?.focus();
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-open-privacy]')) {
+      event.preventDefault();
+      openModal();
+    } else if (target.closest('[data-close-privacy]') || target === overlay) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !overlay.hidden) closeModal();
+  });
+</script>
+
+<style>
+  .privacy-overlay[hidden] {
+    display: none;
+  }
+  .privacy-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .privacy-dialog {
+    position: relative;
+    max-width: 46rem;
+    max-height: min(80vh, 40rem);
+    overflow-y: auto;
+    background: var(--white);
+    color: #1c1c1c;
+    padding: 2.6rem 2.8rem;
+    line-height: 1.7;
+    font-size: 0.92rem;
+  }
+  .privacy-title {
+    margin: 0 0 1.4rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--black);
+  }
+  .privacy-dialog p {
+    margin: 0 0 1.1rem;
+  }
+  .privacy-dialog a {
+    color: inherit;
+    font-weight: 600;
+  }
+  .privacy-close {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    background: none;
+    border: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--grey-500);
+    cursor: pointer;
+    padding: 0.3rem;
+  }
+  .privacy-close:hover {
+    color: var(--black);
+  }
+  @media (max-width: 560px) {
+    .privacy-dialog {
+      padding: 2rem 1.4rem;
+    }
+  }
+</style>

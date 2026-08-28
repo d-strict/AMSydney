@@ -1,0 +1,225 @@
+---
+import { site } from '../data/site';
+const f = site.form;
+---
+
+<section class="waitlist" id="waitlist" aria-labelledby="waitlist-title">
+  <div class="container waitlist-inner">
+    <h2 class="waitlist-title" id="waitlist-title">{f.title}</h2>
+    <p class="waitlist-desc">{f.desc}</p>
+
+    <form
+      class="waitlist-form"
+      id="waitlist-form"
+      novalidate
+      data-msg-consent={f.errors.consent}
+      data-msg-email={f.errors.email}
+      data-msg-duplicate={f.errors.duplicate}
+      data-msg-generic={f.errors.generic}
+    >
+      <div class="waitlist-row">
+        <label class="visually-hidden" for="waitlist-email">Email address</label>
+        <input
+          class="waitlist-input"
+          id="waitlist-email"
+          name="email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder={f.placeholder}
+          required
+        />
+        <button class="waitlist-submit" type="submit">{f.button}</button>
+      </div>
+
+      <label class="waitlist-consent">
+        <input type="checkbox" id="waitlist-consent" name="consent" />
+        <span set:html={f.consentHtml} />
+      </label>
+
+      <p class="waitlist-error" id="waitlist-error" role="alert" hidden></p>
+      <p class="waitlist-micro">{f.micro}</p>
+    </form>
+
+    <p class="waitlist-success" id="waitlist-success" role="status" hidden>
+      {f.success}
+    </p>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('waitlist-form') as HTMLFormElement;
+  const emailInput = document.getElementById('waitlist-email') as HTMLInputElement;
+  const consentInput = document.getElementById('waitlist-consent') as HTMLInputElement;
+  const errorEl = document.getElementById('waitlist-error') as HTMLParagraphElement;
+  const successEl = document.getElementById('waitlist-success') as HTMLParagraphElement;
+  const submitBtn = form.querySelector('.waitlist-submit') as HTMLButtonElement;
+
+  const MESSAGES = {
+    consent: form.dataset.msgConsent!,
+    email: form.dataset.msgEmail!,
+    duplicate: form.dataset.msgDuplicate!,
+    generic: form.dataset.msgGeneric!,
+  };
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function showError(message: string) {
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  }
+
+  function clearError() {
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    clearError();
+
+    const email = emailInput.value.trim();
+    if (!EMAIL_RE.test(email)) {
+      showError(MESSAGES.email);
+      emailInput.focus();
+      return;
+    }
+    if (!consentInput.checked) {
+      showError(MESSAGES.consent);
+      consentInput.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, consent: true }),
+      });
+
+      if (res.status === 409) {
+        showError(MESSAGES.duplicate);
+        return;
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        showError(body?.error === 'invalid_email' ? MESSAGES.email : MESSAGES.generic);
+        return;
+      }
+
+      form.hidden = true;
+      successEl.hidden = false;
+    } catch {
+      showError(MESSAGES.generic);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .waitlist {
+    background: var(--panel);
+    padding-block: 6rem;
+    text-align: center;
+  }
+  .waitlist-inner {
+    max-width: 42rem;
+  }
+  .waitlist-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+    font-weight: 700;
+  }
+  .waitlist-desc {
+    margin: 0 auto 2.2rem;
+    color: var(--grey-400);
+    font-size: 0.98rem;
+  }
+  .waitlist-row {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  .waitlist-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 22rem;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--black);
+    background: var(--white);
+    border: 1px solid var(--white);
+    border-radius: 0;
+  }
+  .waitlist-input::placeholder {
+    color: var(--grey-500);
+  }
+  .waitlist-submit {
+    flex: 0 0 auto;
+    padding: 0.9rem 1.6rem;
+    background: var(--white);
+    color: var(--black);
+    border: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .waitlist-submit:hover {
+    background: var(--grey-300);
+  }
+  .waitlist-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .waitlist-consent {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    margin: 1.4rem auto 0;
+    max-width: 34rem;
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--grey-400);
+    cursor: pointer;
+  }
+  .waitlist-consent input {
+    margin-top: 0.2rem;
+    flex: 0 0 auto;
+    accent-color: var(--white);
+    cursor: pointer;
+  }
+  .waitlist-consent :global(.consent-link) {
+    color: var(--grey-300);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .waitlist-error {
+    margin: 1rem 0 0;
+    color: var(--error);
+    font-size: 0.85rem;
+  }
+  .waitlist-micro {
+    margin: 1.6rem 0 0;
+    font-size: 0.78rem;
+    color: var(--grey-500);
+  }
+  .waitlist-success {
+    margin: 2rem 0 0;
+    font-size: 1.05rem;
+    color: var(--grey-100);
+  }
+  @media (max-width: 560px) {
+    .waitlist-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .waitlist-input {
+      max-width: none;
+    }
+  }
+</style>

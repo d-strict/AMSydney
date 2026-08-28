@@ -1,0 +1,31 @@
+---
+import { site } from '../data/site';
+---
+
+<header class="nav">
+  <div class="nav-inner container">
+    <span class="nav-brand">{site.brand}</span>
+    <span class="nav-city">{site.city}</span>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 10;
+    padding-block: 1.6rem;
+  }
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-brand,
+  .nav-city {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    color: var(--white);
+  }
+</style>
