@@ -15,7 +15,11 @@ export interface WaitlistEntry {
   submittedAt: string;
 }
 
-const STORE_FILE = resolve(process.env.WAITLIST_STORE_FILE || '.data/waitlist.jsonl');
+// On Vercel the deployment filesystem is read-only — only /tmp is writable,
+// and it is ephemeral per serverless instance. Fine for staging; production
+// will hand signups to the email tool (Mailchimp) instead.
+const DEFAULT_STORE = process.env.VERCEL ? '/tmp/waitlist.jsonl' : '.data/waitlist.jsonl';
+const STORE_FILE = resolve(process.env.WAITLIST_STORE_FILE || DEFAULT_STORE);
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
