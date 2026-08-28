@@ -7,3 +7,4 @@ dist/
 .DS_Store
 # local waitlist store (dev fallback)
 .data/
+.vercel/
