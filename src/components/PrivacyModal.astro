@@ -81,7 +81,28 @@ import { site } from '../data/site';
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !overlay.hidden) closeModal();
+    if (overlay.hidden) return;
+    if (event.key === 'Escape') {
+      closeModal();
+      return;
+    }
+    // Trap Tab focus inside the dialog while it is open.
+    if (event.key === 'Tab') {
+      const focusables = dialog.querySelectorAll<HTMLElement>(
+        'button, a[href], [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === dialog)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
   });
 </script>
 

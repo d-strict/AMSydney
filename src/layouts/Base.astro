@@ -9,6 +9,19 @@ interface Props {
 
 const { title = site.meta.title, description = site.meta.description } = Astro.props;
 const ogImage = new URL('/media/hero-orsay.jpg', Astro.site ?? Astro.url);
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: Astro.site?.href ?? Astro.url.href,
+  description,
+  publisher: {
+    '@type': 'Organization',
+    name: "d'strict Co., Ltd.",
+    url: 'https://www.dstrict.com',
+  },
+});
 ---
 
 <!doctype html>
@@ -28,6 +41,7 @@ const ogImage = new URL('/media/hero-orsay.jpg', Astro.site ?? Astro.url);
     <meta name="theme-color" content="#0a0a0a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" as="image" href="/media/hero-orsay.jpg" />
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
     <slot />

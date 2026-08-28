@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PrivacyModal from '../components/PrivacyModal.astro';
+import { site } from '../data/site';
+---
+
+<Base title={`Page not found — ${site.meta.title}`}>
+  <Nav />
+  <main class="nf">
+    <div class="container nf-inner">
+      <p class="nf-code">404</p>
+      <h1 class="nf-title">This page doesn't exist.</h1>
+      <p class="nf-desc">But the journey into Eternal Nature does.</p>
+      <a class="nf-cta" href="/#waitlist">JOIN THE WAITLIST</a>
+    </div>
+  </main>
+  <Footer />
+  <PrivacyModal />
+</Base>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--black);
+  }
+  .nf-code {
+    margin: 0 0 0.6rem;
+    font-size: 0.85rem;
+    letter-spacing: var(--tracking-wide);
+    color: var(--grey-500);
+  }
+  .nf-title {
+    margin: 0 0 0.8rem;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+  }
+  .nf-desc {
+    margin: 0 0 2.2rem;
+    color: var(--grey-400);
+  }
+  .nf-cta {
+    display: inline-block;
+    padding: 0.95rem 2.2rem;
+    background: var(--white);
+    color: var(--black);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+  }
+  .nf-cta:hover {
+    background: var(--grey-300);
+  }
+</style>

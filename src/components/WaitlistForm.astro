@@ -32,6 +32,12 @@ const f = site.form;
         <button class="waitlist-submit" type="submit">{f.button}</button>
       </div>
 
+      <!-- Honeypot: humans never see or fill this field. -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="waitlist-website">Website</label>
+        <input id="waitlist-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
       <label class="waitlist-consent">
         <input type="checkbox" id="waitlist-consent" name="consent" />
         <span set:html={f.consentHtml} />
@@ -40,6 +46,12 @@ const f = site.form;
       <p class="waitlist-error" id="waitlist-error" role="alert" hidden></p>
       <p class="waitlist-micro">{f.micro}</p>
     </form>
+
+    <noscript>
+      <p class="waitlist-noscript">
+        Please enable JavaScript to join the waitlist.
+      </p>
+    </noscript>
 
     <p class="waitlist-success" id="waitlist-success" role="status" hidden>
       {f.success}
@@ -95,7 +107,11 @@ const f = site.form;
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, consent: true }),
+        body: JSON.stringify({
+          email,
+          consent: true,
+          website: (document.getElementById('waitlist-website') as HTMLInputElement).value,
+        }),
       });
 
       if (res.status === 409) {
@@ -176,6 +192,14 @@ const f = site.form;
     opacity: 0.6;
     cursor: default;
   }
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
   .waitlist-consent {
     display: flex;
     gap: 0.6rem;
@@ -207,6 +231,11 @@ const f = site.form;
     margin: 1.6rem 0 0;
     font-size: 0.78rem;
     color: var(--grey-500);
+  }
+  .waitlist-noscript {
+    margin: 1.4rem 0 0;
+    font-size: 0.85rem;
+    color: var(--grey-400);
   }
   .waitlist-success {
     margin: 2rem 0 0;
