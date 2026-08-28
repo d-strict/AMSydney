@@ -1,5 +1,7 @@
 ---
 import { site } from '../data/site';
+
+const { image, video } = site.hero;
 ---
 
 <section class="hero" aria-label={site.name}>
@@ -7,9 +9,29 @@ import { site } from '../data/site';
     Background is placeholder material only (Arte Museum Busan, Musée d'Orsay
     special exhibition). Final artwork curation is not confirmed yet — keep to
     safe subjects (Orsay, Joseon painting) until it is.
-    If replaced with video: autoplay + muted + loop + playsinline.
+    Video renders autoplay + muted + loop + playsinline per spec; the still
+    image is the poster and the fallback (load error, reduced motion, no video).
   -->
-  <div class="hero-bg" role="presentation"></div>
+  {
+    video && (
+      <video
+        class="hero-bg"
+        id="hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster={image.src}
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        {video.webm && <source src={video.webm} type="video/webm" />}
+        {video.mp4 && <source src={video.mp4} type="video/mp4" />}
+      </video>
+    )
+  }
+  <div class="hero-bg hero-bg-image" id="hero-image" role="presentation" hidden={!!video}></div>
   <div class="hero-scrim" role="presentation"></div>
 
   <div class="hero-content container">
@@ -21,6 +43,31 @@ import { site } from '../data/site';
     <a class="hero-cta" href="#waitlist">{site.hero.cta}</a>
   </div>
 </section>
+
+<script>
+  const videoEl = document.getElementById('hero-video') as HTMLVideoElement | null;
+  const imageEl = document.getElementById('hero-image') as HTMLDivElement | null;
+
+  if (videoEl && imageEl) {
+    const showImageInstead = () => {
+      videoEl.remove();
+      imageEl.hidden = false;
+    };
+
+    // Respect reduced-motion: static image instead of a moving background.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      showImageInstead();
+    } else {
+      videoEl.addEventListener('error', showImageInstead);
+      const sources = videoEl.querySelectorAll('source');
+      sources[sources.length - 1]?.addEventListener('error', showImageInstead);
+      // Some browsers block autoplay despite `muted` markup; force via JS and
+      // fall back to the still image if playback is refused.
+      videoEl.muted = true;
+      videoEl.play().catch(showImageInstead);
+    }
+  }
+</script>
 
 <style>
   .hero {
@@ -35,12 +82,20 @@ import { site } from '../data/site';
   .hero-bg {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-bg-image {
     background-image: url('/media/hero-orsay.jpg');
     background-size: cover;
     background-position: center;
   }
+  .hero-bg-image[hidden] {
+    display: none;
+  }
   @media (max-width: 800px) {
-    .hero-bg {
+    .hero-bg-image {
       background-image: url('/media/hero-orsay-800.jpg');
     }
   }

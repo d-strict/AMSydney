@@ -10,6 +10,17 @@ export const site = {
   city: 'SYDNEY',
 
   hero: {
+    /**
+     * Background media. If `video.src` is set the hero renders an autoplaying,
+     * muted, looping video (per spec) with `image` as poster/fallback; set
+     * `video: null` to use the still image only.
+     * Current video is a placeholder (slow zoom over the Busan Orsay photo) —
+     * replace with the real exhibition footage when curation is confirmed.
+     */
+    image: { src: '/media/hero-orsay.jpg', small: '/media/hero-orsay-800.jpg' },
+    video: { webm: '/media/hero-orsay.webm', mp4: '/media/hero-orsay.mp4' } as
+      | { webm?: string; mp4?: string }
+      | null,
     eyebrow: 'ARTE MUSEUM SPECIAL EDITION IN SYDNEY · COMING 2027',
     // Rendered on two lines, matching the approved design.
     titleLines: ['Sydney, step into', 'Eternal Nature.'],
