@@ -22,8 +22,9 @@ npm run check    # type-check
 - `src/pages/index.astro` — the page (static, prerendered)
 - `src/pages/api/waitlist.ts` — form endpoint (server-rendered)
 - `src/lib/waitlist.ts` — signup storage
-- `public/media/` — hero background image + placeholder loop video (webm/mp4,
-  slow zoom over the Arte Museum Busan Orsay special-exhibition photo)
+- `public/media/` — hero background video (`hero.mp4`, 26s silent loop of the
+  Arte Museum Busan Orsay special exhibition, 3.4MB), its first-frame poster,
+  and the still image used as fallback
 
 ## Waitlist storage
 
@@ -51,9 +52,9 @@ npm run check    # type-check
 
 - [ ] Confirm final hero visual (current image/video are placeholders — safe
       material only until artwork curation is confirmed). Video background is
-      already implemented: set `hero.video` in `src/data/site.ts` (webm + mp4),
-      autoplay/muted/loop/playsinline, still-image fallback on load failure and
-      for prefers-reduced-motion
+      already wired: set `hero.video` in `src/data/site.ts`,
+      autoplay/muted/loop/playsinline, still-image fallback on load failure,
+      prefers-reduced-motion, and Data Saver
 - [ ] Legal: confirm the storage-platform sentence in the Privacy Collection Notice
       (written platform-neutral for now; spec drafts referenced Imweb/Webflow)
 - [ ] Confirm global Privacy Policy URL and Instagram handle in `src/data/site.ts`

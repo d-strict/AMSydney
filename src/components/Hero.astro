@@ -22,7 +22,7 @@ const { image, video } = site.hero;
         loop
         playsinline
         preload="auto"
-        poster={image.src}
+        poster={video.poster ?? image.src}
         aria-hidden="true"
         tabindex="-1"
       >
@@ -54,8 +54,10 @@ const { image, video } = site.hero;
       imageEl.hidden = false;
     };
 
-    // Respect reduced-motion: static image instead of a moving background.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Respect reduced-motion and Data Saver: static image instead of pulling
+    // down a few MB of video.
+    const saveData = (navigator as any).connection?.saveData === true;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || saveData) {
       showImageInstead();
     } else {
       videoEl.addEventListener('error', showImageInstead);
@@ -103,7 +105,8 @@ const { image, video } = site.hero;
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.55) 100%);
+      radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.62) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 35%, rgba(0, 0, 0, 0.6) 100%);
   }
   .hero-content {
     position: relative;
